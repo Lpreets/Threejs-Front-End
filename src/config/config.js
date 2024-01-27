@@ -3,7 +3,7 @@ const config = {
     backendUrl: "http://localhost:8080/api/v1/dalle",
   },
   production: {
-    backendUrl: "https://threejs-st4o.onrender.com/",
+    backendUrl: "https://2tja4j4bpj.us-east-1.awsapprunner.com/",
   },
 };
 

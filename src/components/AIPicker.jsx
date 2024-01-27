@@ -5,7 +5,7 @@ const AIPicker = ({ prompt, setPrompt, generatingImg, handleSubmit }) => {
   return (
     <div className="aipicker-container">
       <textarea 
-        placeholder="Currently Not Working. Will be fixed soon! Enjoy the other parts of the webapp for now!"
+        placeholder="Type"
         rows={5}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}

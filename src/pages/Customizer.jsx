@@ -43,7 +43,7 @@ const Customizer = () => {
             prompt={prompt}
             setPrompt={setPrompt}
             generatingImg={generatingImg}
-            // handleSubmit={handleSubmit}
+            handleSubmit={handleSubmit}
           />
         );
       default:
@@ -53,27 +53,29 @@ const Customizer = () => {
 
   const handleSubmit = async (type) => {
     if (!prompt) return alert("Please enter a prompt");
-
+  
     try {
       setGeneratingImg(true);
       setError(null);
-
+  
       const response = await fetch(config.production.backendUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          prompt,
-        }),
+        body: JSON.stringify({ prompt }),
       });
-
-      const data = await response.json();
-
-      handleDecals(type, `${data.photo}`);
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+  
+      handleDecals(type, imageUrl);
     } catch (error) {
       setError("An error occurred while generating the image.");
-      alert(error);
       console.error(error);
     } finally {
       setGeneratingImg(false);
@@ -81,11 +83,21 @@ const Customizer = () => {
     }
   };
 
-  const handleDecals = (type, result) => {
+  const handleDecals = (type, imageUrl) => {
+    switch (type) {
+      case 'logo':
+        state.logoDecal = imageUrl;
+        break;
+      case 'full':
+        state.fullDecal = imageUrl;
+        break;
+      default:
+        console.error("Invalid decal type");
+        return;
+    }
+  
     const decalType = DecalTypes[type];
-    state[decalType.stateProperty] = result;
-
-    if (!activeFilterTab[decalType.filterTab]) {
+    if (decalType && !activeFilterTab[decalType.filterTab]) {
       handleActiveFilterTab(decalType.filterTab);
     }
   };
